@@ -171,14 +171,27 @@ class GradCAM(_BaseWrapper):
 
     def generate(self, target_layer):
         fmaps = self._find(self.fmap_pool, target_layer)
+#         print("shape", fmaps.shape)
+#         print("fmaps", fmaps)
+        
         grads = self._find(self.grad_pool, target_layer)
+#         print("shape", grads.shape)
+#         print("grads", grads)
+        
         weights = self._compute_grad_weights(grads)
+#         print("shape", weights.shape)
+#         print("weights", weights)
 
         gcam = (fmaps[0] * weights[0]).sum(dim=0)
+#         print("shape", gcam.shape)
+#         print("gcam", gcam)
+        
         gcam = torch.clamp(gcam, min=0.0)
+#         print("shape", gcam.shape)
+#         print("gcam", gcam)
 
         gcam -= gcam.min()
         gcam /= gcam.max()
 
-        return gcam.cpu().numpy()
+        return gcam.cpu().numpy()#, fmaps, grads, weights
 
